@@ -1,4 +1,4 @@
-import imaplib, os, getpass, re, email, email.utils, datetime, time, calendar
+import imaplib, os, getpass, re, email, email.utils, datetime, time, calendar, PyZenity
 
 uidre = re.compile(r"\d+\s+\(UID (\d+)\)$")
 def getUIDForMessage(n):
@@ -33,7 +33,13 @@ def UIDFromFilename(fname):
 
 
 svr = imaplib.IMAP4_SSL('imap.gmail.com')
-svr.login(raw_input("Gmail address: "), getpass.getpass("Gmail password: "))
+
+a=PyZenity.InfoMessage("Welcome to Gmail-backup. This tool will backup your Gmail emails automatically.")
+useraddress=PyZenity.GetText("Please Enter your gmail address",'username@gmail.com')
+password=PyZenity("Now enter your password",'',password=True)
+svr.login(useraddress, password)
+
+#svr.login(raw_input("Gmail address: "), getpass.getpass("Gmail password: "))
 
 resp, [countstr] = svr.select("[Gmail]/All Mail", True)
 count = int(countstr)
@@ -57,7 +63,8 @@ while ungotten-gotten>1:
 # The download loop
 for i in range(ungotten, count+1):
 	uid = getUIDForMessage(i)
-	print "Downloading %d/%d (UID: %s)" % (i, count, uid)
+	#print "Downloading %d/%d (UID: %s)" % (i, count, uid)
+	a=PyZenity.InfoMessage("Downloading %d/%d (UID: %s)" % (i, count, uid),timeout=2)
 	downloadMessage(i, uid+'.eml')
 
 
